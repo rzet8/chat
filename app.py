@@ -9,6 +9,8 @@ from flask import Flask, \
     redirect, render_template, request, session
 
 app = Flask(__name__)
+app.secret_key = 'efewhfuyy2138423ijkr53249085-90rvg8e-3j42'
+app.config['SECRET_KEY'] = 'efewhfuyy2138423ijkr53249085-90rvg8e-3j423242'
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 @socketio.on('message')
@@ -49,8 +51,6 @@ def exit_page():
     return redirect("/")
 
 if __name__ == "__main__":
-    app.secret_key = 'efewhfuyy2138423ijkr53249085-90rvg8e-3j42'
-    app.config['SECRET_KEY'] = 'efewhfuyy2138423ijkr53249085-90rvg8e-3j423242'
     print("[CONSOLE] Server run")
     socketio.run(app)
 
