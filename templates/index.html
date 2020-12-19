@@ -55,7 +55,7 @@
         let socket;
         let lst = document.querySelector(".msg")
         let bar = document.querySelector(".bar")
-        socket = io.connect('http://127.0.0.1:5000');
+        socket = io.connect('https://r1chat.herokuapp.com/');
 
         function send_msg() {
             let msg = document.querySelector("input").value
