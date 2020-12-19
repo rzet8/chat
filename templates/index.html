@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RZZ | {{title}}</title>
+</head>
+<body>
+
+
+    {% if not username %}
+
+    <div class="container">
+        <form class="position-absolute top-50 start-50 translate-middle" action="" method="GET">
+            <h2 class="text-center">Authorization</h2>
+            <div class="input-group flex-nowrap mb-3" style="width: 300px;">
+                <span class="input-group-text" id="addon-wrapping">@</span>
+                <input type="text" class="form-control" name="username" minlength="4" maxlength="12" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 300px;">Connect</button>
+        </form>
+    </div>
+
+    {% else %}
+    
+    <div class="container">
+        <div class="position-absolute top-50 start-50 translate-middle">
+            <h1 class="text-center">Chat</h1>
+            <div>
+                <ul class="list-group bar" style="margin-top: 30px;">
+                </ul>
+            </div>
+            <div>
+                <ul class="list-group msg" style="margin-top: 15px;">
+                </ul>
+            </div>
+            <div class="input-group trash" style="margin-top: 30px; width: 355px;">
+                <input type="text" class="form-control msg" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="Message">
+                <button class="btn btn-success" type="button" autofocus onclick="send_msg()">Send</button>
+                <a href="exit" class="btn btn-danger" >Exit</a>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% if username %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
+    <script>
+        let socket;
+        let lst = document.querySelector(".msg")
+        let bar = document.querySelector(".bar")
+        socket = io.connect('http://127.0.0.1:5000');
+
+        function send_msg() {
+            let msg = document.querySelector("input").value
+            if (msg != ""){
+                socket.send("{{username}}: "+ msg);
+                document.querySelector("input").value = ""
+            };
+        };
+
+        document.onkeydown = function checkKeycode(event)
+	    {
+		    var keycode;
+		    if(!event) var event = window.event;
+		    if (event.keyCode) keycode = event.keyCode; // для IE
+		    else if(event.which) keycode = event.which; // для всех браузеров
+            
+            if (keycode == 13){
+                send_msg()
+            }
+	    }
+
+        
+        socket.on('connect', function() {
+            socket.send("{{username}} connected");
+        });
+
+        socket.on('message', data => {
+            console.log(data)
+            lst.innerHTML += '<li class="list-group-item list-group-item-light">'+ data +'</li>'
+        });
+
+        socket.on('bar', data => {
+            console.log(data)
+            bar.innerHTML = '<li class="list-group-item list-group-item-primary">'+ data +'</li>'
+        });
+        window.onbeforeunload = function () {
+            socket.send("{{username}} disconnected");
+        }
+    </script>
+    {% endif %}
+</body>
+</html>

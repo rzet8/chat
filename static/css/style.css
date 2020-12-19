@@ -1,0 +1,11 @@
+.white{
+    color: #fff;
+}
+
+.backgroud img{
+    z-index: -1;
+    background-size: cover;
+    background-attachment: fixed;
+    position: absolute;
+    background-repeat: no-repeat;
+}
